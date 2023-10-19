@@ -13,7 +13,7 @@ parser.add_argument('-r', '--resolution', type=int, default=1000, help='font ren
 
 # final image size - font-specific configuration
 # roughly 1000 for alpha, 500 for numeric
-parser.add_argument('-s', '--size', type=int, default=500, help='final image size')
+parser.add_argument('-s', '--size', type=int, default=0, help='final image size')
 
 parser.add_argument('-o', '--out', default='tmp', help='output directory')
 
@@ -40,6 +40,9 @@ chfilter = args.filter
 # create output directory if does not exists
 if not os.path.exists(out_dir):
     os.mkdir(out_dir)
+
+# delete everything in output directory
+os.system('rm -rf {}/*'.format(out_dir))
 
 print('''
 ================================
@@ -136,10 +139,14 @@ for glyph in font:
 
     # crop to bounding box
     img = img.crop(bbox)
-
-    # increase canvas size to final size
     w, h = img.size
-    r = final_size
+
+    # increase size to fixed canvas size
+    if final_size != 0:
+        r = final_size
+    else:
+        r = max(w, h)
+
     squareImg = Image.new('RGB', (r, r), (255, 255, 255))
     hoffset = int((r - w) / 2)
     voffset = int((r - h) / 2)

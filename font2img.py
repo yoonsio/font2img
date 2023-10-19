@@ -1,4 +1,4 @@
-import os, sys, argparse
+import os, sys, argparse, re
 from fontforge import *
 from PIL import Image, ImageChops
 
@@ -35,7 +35,7 @@ inc_upper = args.upper
 inc_lower = args.lower
 inc_num = args.number
 out_dir = args.out
-char_filter = args.filter
+chfilter = args.filter
 
 # create output directory if does not exists
 if not os.path.exists(out_dir):
@@ -109,6 +109,11 @@ for glyph in font:
             continue
     else:
         continue
+
+    # apply filter post-parsing
+    if chfilter:
+        if not re.search(chfilter, name):
+            continue
 
     # export image file
     fname = "{}/{}.png".format(out_dir, name)
